@@ -1,0 +1,33 @@
+apply plugin: 'application'
+apply plugin: 'groovy'
+
+mainClassName = 'com.github.brosander.ignite.playground.IgnitePlaygroundMain'
+
+//https://stackoverflow.com/questions/25227198/how-to-pass-a-reference-to-distribution-home-directory-using-gradle-application#answer-25240099
+startScripts.with {
+  doLast {
+    unixScript.text = unixScript.text.replaceFirst('(?<=DEFAULT_JVM_OPTS=)((\'|\")(.*)(\'|"))(?=\n)',
+            '\'$3 "-Dinit.groovy=\\\\"file:\\$APP_HOME/conf/init.groovy\\\\""\'')
+    windowsScript.text = windowsScript.text.replaceFirst('(?<=DEFAULT_JVM_OPTS=)(.*)(?=\r\n)',
+            '$1 "-Dinit.groovy=\\\\"file:%~dp0../conf/init.groovy\\\\""')
+  }
+}
+
+dependencies {
+  compile 'org.slf4j:slf4j-api:1.7.25'
+  compile 'org.apache.ignite:ignite-core:2.2.0'
+  compile 'org.apache.ignite:ignite-indexing:2.2.0'
+
+  compile 'org.codehaus.groovy:groovy-all:2.4.12'
+  compile 'commons-cli:commons-cli:1.4'
+  compile('jline:jline:2.14.5') {
+    exclude(group: 'junit', module: 'junit')
+  }
+
+  runtime 'ch.qos.logback:logback-classic:1.2.3'
+}
+
+repositories {
+  mavenCentral()
+}
+
