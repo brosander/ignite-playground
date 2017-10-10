@@ -4,11 +4,16 @@ import groovy.sql.Sql
 import org.apache.ignite.IgniteJdbcThinDriver
 import org.apache.ignite.Ignition
 import org.apache.ignite.configuration.CacheConfiguration
+import org.apache.ignite.configuration.IgniteConfiguration
 
 System.setSecurityManager(new PlaygroundSecurityManager())
 println System.getSecurityManager()
 
-ignite = Ignition.start()
+ignite = Ignition.start(new IgniteConfiguration().setClassLoader(getClass().getClassLoader()))
+
+compute = ignite.compute()
+
+exec = ignite.executorService()
 
 expensiveCache = ignite.getOrCreateCache(new CacheConfiguration<String, String>()
         .setName("expensive")
